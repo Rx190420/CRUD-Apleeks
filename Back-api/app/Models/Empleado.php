@@ -12,12 +12,12 @@ class Empleado extends Model
     protected $table = 'empleado';
 
     protected $fillable = [
-        'Nombre',
-        'Apellido_p',
-        'Apellido_m',
+        'nombre',
+        'apellido_p',
+        'apellido_m',
         'telefono',
         'puesto',
-        'empresa',
+        'empresa'
     ];
 }
 

@@ -13,55 +13,125 @@ class EmpleadosController extends Controller
         $empleados = Empleado::all(); 
 
         if ($empleados->isEmpty()) {
-            $data = [
+            return response()->json([
                 'message' => 'No se encontraron empleados',
                 'status' => 200
-            ];
-            return response()->json($data, 404);
+            ], 200);
         }
 
-        return response()->json($empleados, 200);
+        return response()->json([
+            $empleados,
+        ], 200);
     }
 
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-           'Nombre' => 'required',
-           'Apellido_p' => 'required',
-           'Apellido_m' => 'required',
-           'telefono' => 'required',
-           'puesto' => 'required',
-           'empresa' => 'required', 
+            'nombre' => 'required|string|max:255',
+            'apellido_p' => 'required|string|max:255',
+            'apellido_m' => 'required|string|max:255',
+            'telefono' => 'required|string|max:10',
+            'puesto' => 'required|string|max:255',
+            'empresa' => 'required|string|max:255', 
         ]);
 
         if ($validator->fails()) {
-            $data = [
-                'message' => 'Error en la validacion de los datos',
+            return response()->json([
+                'message' => 'Error en la validación de los datos',
                 'errors' => $validator->errors(),
-                'stattus' => 400
-            ];
-            return response()->json($data, 400);
+                'status' => 400
+            ], 400);
         }
 
-        $empleado = Empleado::create([
-            'Nombre' => $request->nombre,
-            'Apellido_p' => $request->apellido_p,
-           'Apellido_m' => $request->apellido_m,
-           'telefono' => $request->telefono,
-           'puesto' => $request->puesto,
-           'empresa' => $request->empresa, 
-        ]);
+        $empleado = Empleado::create($request->all());
+
         if (!$empleado) {
-            $data = [
+            return response()->json([
                 'message' => 'Error al crear el empleado',
-                'errors' => $validator->errors(),
-                'stattus' => 400
-            ];
-            return response()->json($data, 400);
+                'status' => 500
+            ], 500);
         }
 
-        
+        return response()->json([
+            'empleado' => $empleado,
+            'status' => 201
+        ], 201);
+    }
+
+    public function show($id) 
+    {
+        $empleado = Empleado::find($id);
+
+        if (!$empleado) {
+            return response()->json([
+                'message' => 'Empleado no encontrado',
+                'status' => 404
+            ], 404);
+        }
+
+        return response()->json([
+            'empleado' => $empleado,
+            'status' => 200
+        ], 200);
+    }
+
+    public function destroy($id)
+    {
+        $empleado = Empleado::find($id);
+
+        if (!$empleado) {
+            return response()->json([
+                'message' => 'Empleado no encontrado',
+                'status' => 404
+            ], 404);
+        }
+
+        $empleado->delete();
+
+        return response()->json([
+            'message' => 'Empleado eliminado',
+            'status' => 200
+        ], 200);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $empleado = Empleado::find($id);
+
+        if (!$empleado) {
+            return response()->json([
+                'message' => 'Empleado no encontrado',
+                'status' => 404
+            ], 404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'nombre' => 'required|string|max:255',
+            'apellido_p' => 'required|string|max:255',
+            'apellido_m' => 'required|string|max:255',
+            'telefono' => 'required|string|max:10',
+            'puesto' => 'required|string|max:255',
+            'empresa' => 'required|string|max:255', 
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Error en la validación de los datos',
+                'errors' => $validator->errors(),
+                'status' => 400
+            ], 400);
+        }
+
+        $empleado->update($request->all());
+
+        return response()->json([
+            'message' => 'Empleado actualizado',
+            'empleado' => $empleado,
+            'status' => 200
+        ], 200);
     }
 }
+
+
 
 

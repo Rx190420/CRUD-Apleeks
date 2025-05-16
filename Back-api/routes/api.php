@@ -7,12 +7,10 @@ use App\Http\Controllers\empleadosController;
 
 Route::get("/empleados", [empleadosController::class, 'index']);
 
-Route::post("/empleados", [studenController::class, 'store']);
+Route::get("/empleados/{id}", [empleadosController::class, 'show']);
 
-Route::put("/empleados/{id}", function () {
-    return "Editando empleados";
-});
+Route::post("/empleados", [empleadosController::class, 'store']);
 
-Route::delete("/empleados/{id}", function () {
-    return "Elimando empleados";
-});
+Route::put("/empleados/{id}", [empleadosController::class, 'update']);
+
+Route::delete("/empleados/{id}", [empleadosController::class, 'destroy']);
